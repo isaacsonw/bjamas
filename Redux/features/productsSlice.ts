@@ -3,36 +3,42 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
-interface CounterState {
-  value: number;
+interface ProductState {
+  productsData?: {}[];
+  filtersData: string[];
 }
 
-const initialState: CounterState = {
-  value: 0,
+const initialState: ProductState = {
+  productsData: [],
+  filtersData: [],
 };
 
 export const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1;
+    getProducts: (state, { payload }): ProductState => {
+      return {
+        ...state,
+        //@ts-ignore,
+        productsData: [...state.productsData, ...payload],
+      };
     },
-    decrement: (state) => {
-      state.value -= 1;
-    },
-    clearProduts: (state) => {
-      state.value = 0;
-    },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
+    productFilter: (state, { payload }): ProductState => {
+      return {
+        ...state,
+        //@ts-ignore,
+        filtersData: [...payload],
+      };
     },
   },
 });
 
-export const { increment, decrement, incrementByAmount, clearProduts } =
-  productsSlice.actions;
+export const { getProducts, productFilter } = productsSlice.actions;
 
-export const selectCount = (state: RootState) => state.products.value;
+export const filterData = (state: RootState) => state.products.filtersData;
+export const allProducts = (state: RootState) => state.products.productsData;
+
+// allProducts.map((e) => )
 
 export default productsSlice.reducer;

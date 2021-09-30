@@ -23,10 +23,11 @@ interface Props {
 export const Button: FC<Props> = ({ text, onClick, outline }: Props) => {
   return (
     <ButtonWrapper
+      onClick={() => onClick()}
       //@ts-ignore
       outline={outline}
       className="bg-gray-900 flex justify-center items-center cursor-pointer px-6 py-1">
-      <button className="text-white text-sm py-1" onClick={() => onClick()}>
+      <button className="text-white text-sm py-1">
         {text || 'ADD TO CART'}
       </button>
     </ButtonWrapper>

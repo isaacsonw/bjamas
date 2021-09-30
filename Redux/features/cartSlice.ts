@@ -17,25 +17,33 @@ export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    toggleCart: (state) => {
-      state.toggle = !state.toggle;
+    openCart: (state) => {
+      state.toggle = true;
     },
-    cartItems: (state) => {
+    closeCart: (state) => {
+      state.toggle = false;
+    },
+    cartItems: (state): CartState => {
+      //@ts-ignore
+      return [...state.data];
+    },
+    addToCart: (state, { payload }): CartState => {
       return {
-        ...state,
+        toggle: true,
         //@ts-ignore
-        data: [...state.data, state.data],
+        data: [...state.data, payload],
       };
     },
-    clearProduts: (state) => {
+    clearCart: (state) => {
       state.data = [];
     },
   },
 });
 
-export const { toggleCart, cartItems, clearProduts } = cartSlice.actions;
+export const { cartItems, clearCart, openCart, closeCart, addToCart } =
+  cartSlice.actions;
 
 export const cartToggle = (state: RootState) => state.cart.toggle;
-export const cartItemsData = (state: RootState) => state.cart.toggle;
+export const cartItemsData = (state: RootState) => state.cart.data;
 
 export default cartSlice.reducer;

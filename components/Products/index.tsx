@@ -1,12 +1,18 @@
 /** @format */
 
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ProdutsDatas, Filters, PriceRange, Product } from './productData';
 import ProductCard from '../ProductCard/index';
 import { BiSliderAlt } from 'react-icons/bi';
 import { RiCloseLine } from 'react-icons/ri';
 import { Button } from '@components/Button';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  allProducts,
+  productFilter,
+  filterData,
+} from 'Redux/features/productsSlice';
 
 const ProductWrapper = styled.div`
   width: 100%;
@@ -51,16 +57,46 @@ const ProductWrapper = styled.div`
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
   }
+  [type='radio']:checked + label:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 4px;
+    left: 7px;
+    width: 6px;
+    height: 11px;
+    border: solid #333;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
 `;
 
-const FiltersComponent = () => (
+const FiltersComponent = ({ filters, setFilters, dispatch }: any) => (
   <>
     <div>
       <h1 className="font-bold">Category</h1>
       <div className="mt-7">
         {ProdutsDatas.filters.categories?.map((filter: Filters) => (
           <div key={filter} className=" my-3 cursor-pointer">
-            <input id={filter} type="checkbox" />
+            <input
+              //@ts-ignore
+              onChange={(e) => {
+                if (e.target.checked === false) {
+                  const data = filters.filter(
+                    (el: string) => el !== e.target.value
+                  );
+                  setFilters([...data]);
+                  dispatch(productFilter([...data]));
+                }
+                if (e.target.checked) {
+                  setFilters([...filters, e.target.value]);
+                  dispatch(productFilter([e.target.value, ...filters]));
+                }
+              }}
+              id={filter}
+              type="checkbox"
+              value={filter}
+            />
             <label htmlFor={filter} className="cursor-pointer font-light">
               {filter}
             </label>
@@ -73,7 +109,7 @@ const FiltersComponent = () => (
       <div className="mt-7">
         {ProdutsDatas.filters.priceRange?.map((range: PriceRange) => (
           <div key={range} className="cursor-pointer my-3 ">
-            <input id={range} type="checkbox" />
+            <input id={range} type="radio" name="pr" value={range} />
             <label htmlFor={range} className=" cursor-pointer font-light">
               {range}
             </label>
@@ -86,6 +122,21 @@ const FiltersComponent = () => (
 
 export const Products: FC = () => {
   const [toggleFilter, setToggleFilter] = useState(false);
+  const products = useSelector(allProducts);
+  const filteredData = useSelector(filterData);
+  const dispatch = useDispatch();
+  const [filters, setFilters] = useState([]);
+
+  console.log(filteredData, 'SJJJJJ');
+
+  const pData = useCallback(() => {
+    return products?.filter((o) =>
+      //@ts-ignore
+      Object.keys(o).some((k: string) => filters.includes(o[k]))
+    );
+  }, [filters]);
+
+  const data = pData()?.length ? pData() : products;
 
   return (
     <ProductWrapper>
@@ -151,14 +202,21 @@ export const Products: FC = () => {
             </aside>
           ) : null}
           <aside className=" relative w-1/3 hidden md:block">
-            <FiltersComponent />
+            <FiltersComponent
+              setFilters={setFilters}
+              filters={filters}
+              dispatch={dispatch}
+            />
           </aside>
           <aside className="flex flex-wrap items-center justify-center md:justify-end w-full md:flex-1 ">
-            {ProdutsDatas.products?.map((product: Product) => (
-              <div key={product.id}>
-                <ProductCard data={product} />
-              </div>
-            ))}
+            {/* @ts-ignore */}
+            {data.length &&
+              //@ts-ignore
+              data?.map((product: Product) => (
+                <div key={product.id}>
+                  <ProductCard data={product} />
+                </div>
+              ))}
           </aside>
         </section>
       </div>

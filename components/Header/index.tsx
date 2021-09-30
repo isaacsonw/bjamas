@@ -9,6 +9,8 @@ import H2 from '../../assets/h-2.png';
 import H3 from '../../assets/h-3.png';
 import { Cart } from '../Cart/index';
 import styled from 'styled-components';
+import { openCart, addToCart } from 'Redux/features/cartSlice';
+import { useDispatch } from 'react-redux';
 
 const HeaderWrapper = styled.div`
   @media (max-width: 820px) {
@@ -20,6 +22,15 @@ const HeaderWrapper = styled.div`
 `;
 
 export const Header: FC = () => {
+  const dispatch = useDispatch();
+
+  //Test
+  const data = {
+    imageUrl: HeaderImage,
+    prodcutName: 'Samurai King Resting',
+    price: 564444,
+  };
+
   return (
     <HeaderWrapper className="relative">
       <Cart />
@@ -27,7 +38,10 @@ export const Header: FC = () => {
         <section className="flex items-center my-3 justify-between w-full">
           <h1 className="text-2xl font-bold">Samurai King Resting</h1>
           <div className="hidden md:block">
-            <Button text="ADD TO CART" onClick={() => []} />
+            <Button
+              text="ADD TO CART"
+              onClick={() => dispatch(addToCart(data))}
+            />
           </div>
         </section>
         <section className="relative ">
