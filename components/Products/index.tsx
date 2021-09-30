@@ -188,7 +188,11 @@ export const Products: FC = () => {
                     />
                   </div>
                 </div>
-                <FiltersComponent />
+                <FiltersComponent
+                  setFilters={setFilters}
+                  filters={filters}
+                  dispatch={dispatch}
+                />
 
                 <div className="flex w-full justify-between py-5">
                   <div className="w-full mr-3">
